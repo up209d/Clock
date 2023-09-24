@@ -226,9 +226,9 @@
     let video_id = 1;
     const playlist = document.getElementById("playlist");
     setInterval(() => {
-        video_id = video_id++ % 8 + 1;
+        video_id = video_id++ % 39 + 1;
         playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
-    }, 160000);
+    }, 10000);
 
     function padClock(p, n) {
         return p + ('0' + n).slice(-2);
