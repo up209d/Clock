@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset='UTF-8'>
+    <title>Clock</title>
+    <meta name="robots" content="noindex">
+    <style id="INLINE_PEN_STYLESHEET_ID">
+        @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300");
+
+        @keyframes anti-burn-in {
+            0% {
+                transform: translate(0, -5px);
+            }
+            25% {
+                transform: translate(-5px, 0);
+            }
+            50% {
+                transform: translate(0, 5px);
+            }
+            75% {
+                transform: translate(5px, 0);
+            }
+            100% {
+                transform: translate(0, -5px);
+            }
+        }
+
+        body {
+            text-align: center;
+            background-color: #000;
+            color: #EEE;
+            font-family: "Roboto Condensed", sans-serif;
+            font-weight: 300;
+            overflow: hidden;
+        }
+
+        .bg-video {
+            min-width: 100%;
+            min-height: 100%;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: -2;
+            opacity: 0.95;
+        }
+
+        .vignette {
+            position: fixed;
+            top: 0;
+            left: 0;
+            min-width: 100%;
+            min-height: 100%;
+            box-shadow: 0 0 calc(100vw / 10) calc(100vw / 20) rgba(0,0,0,0.5) inset;
+            z-index: -1;
+        }
+
+        .clock {
+            animation: anti-burn-in forwards 30s infinite linear;
+        }
+
+        .column {
+            display: inline-block;
+            vertical-align: top;
+            font-size: calc(100vw / 8);
+            line-height: calc(100vw / 8);
+        }
+
+        .colon {
+            display: inline-block;
+            font-size: calc(100vw / 8);
+            line-height: calc(100vw / 8);
+        }
+
+        .column {
+            transition: transform 300ms;
+        }
+
+        .colon {
+            transition: transform 300ms;
+            transform: translateY(calc(50vh - 43px));
+        }
+
+        .colon:after {
+            content: ":";
+        }
+
+        .num {
+            transition: opacity 500ms, text-shadow 100ms;
+            opacity: 0.025;
+        }
+
+        .num.visible {
+            opacity: 1;
+            text-shadow: 3px 3px 0 #000000;
+        }
+
+        .num.close {
+            opacity: 0.35;
+        }
+
+        .num.far {
+            opacity: 0.15;
+        }
+
+        .num.distant {
+            opacity: 0.1;
+        }
+    </style>
+</head>
+
+<body>
+<video class="bg-video" autoplay loop muted>
+    <source src="loop.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<div class="vignette"></div>
+<div class="clock">
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+    </div>
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+        <div class="num">6</div>
+        <div class="num">7</div>
+        <div class="num">8</div>
+        <div class="num">9</div>
+    </div>
+    <div class="colon"></div>
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+    </div>
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+        <div class="num">6</div>
+        <div class="num">7</div>
+        <div class="num">8</div>
+        <div class="num">9</div>
+    </div>
+    <div class="colon"></div>
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+    </div>
+    <div class="column">
+        <div class="num">0</div>
+        <div class="num">1</div>
+        <div class="num">2</div>
+        <div class="num">3</div>
+        <div class="num">4</div>
+        <div class="num">5</div>
+        <div class="num">6</div>
+        <div class="num">7</div>
+        <div class="num">8</div>
+        <div class="num">9</div>
+    </div>
+</div>
+
+<script>
+    let size = window.innerWidth / 8;
+    let columns = Array.from(document.getElementsByClassName('column'));
+    let d, c;
+    let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
+    let use24HourClock = true;
+
+    window.onresize = function () {
+        size = window.innerWidth / 8;
+    }
+
+    function padClock(p, n) {
+        return p + ('0' + n).slice(-2);
+    }
+
+    function getClock() {
+        d = new Date();
+        return [
+            use24HourClock ? d.getHours() : d.getHours() % 12 || 12,
+            d.getMinutes(),
+            d.getSeconds()].reduce(padClock, '');
+    }
+
+    function getClass(n, i2) {
+        return classList.find((class_, classIndex) => Math.abs(n - i2) === classIndex) || '';
+    }
+
+    let loop = setInterval(() => {
+        c = getClock();
+
+        columns.forEach((ele, i) => {
+            let n = +c[i];
+            let offset = -n * size;
+            ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
+            Array.from(ele.children).forEach((ele2, i2) => {
+                ele2.className = 'num ' + getClass(n, i2);
+            });
+        });
+    }, 200 + Math.E * 10);
+</script>
+</body>
+
+</html>
