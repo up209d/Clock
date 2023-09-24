@@ -35,8 +35,8 @@
         }
 
         .bg-video {
-            min-width: 100%;
-            min-height: 100%;
+            min-width: 100vw;
+            min-height: 100vh;
             position: fixed;
             top: 50%;
             left: 50%;
@@ -49,14 +49,18 @@
             position: fixed;
             top: 0;
             left: 0;
-            min-width: 100%;
-            min-height: 100%;
+            min-width: 100vw;
+            min-height: 100vh;
             box-shadow: 0 0 calc(100vw / 10) calc(100vw / 20) rgba(0,0,0,0.5) inset;
             z-index: -1;
         }
 
         .clock {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
             animation: anti-burn-in forwards 30s infinite linear;
+            position: relative;
         }
 
         .column {
@@ -67,22 +71,27 @@
         }
 
         .colon {
-            display: inline-block;
             font-size: calc(100vw / 8);
             line-height: calc(100vw / 8);
+            margin: 0 calc(100vw / 200);
+            display: inline-flex;
+            height: 100%;
+            flex-flow: row nowrap;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+            padding-bottom: calc(100vw / (8*8));
+            text-shadow: 3px 3px 0 #000000;
+            transition: .1s ease-in-out;
+        }
+
+        .hidden {
+            display: none;
+            visibility: hidden;
         }
 
         .column {
             transition: transform 300ms;
-        }
-
-        .colon {
-            transition: transform 300ms;
-            transform: translateY(calc(50vh - 43px));
-        }
-
-        .colon:after {
-            content: ":";
         }
 
         .num {
@@ -100,11 +109,11 @@
         }
 
         .num.far {
-            opacity: 0.15;
+            opacity: 0.1;
         }
 
         .num.distant {
-            opacity: 0.1;
+            opacity: 0.05;
         }
     </style>
 </head>
@@ -135,7 +144,9 @@
         <div class="num">8</div>
         <div class="num">9</div>
     </div>
-    <div class="colon"></div>
+    <div class="colon">
+        <div>:</div>
+    </div>
     <div class="column">
         <div class="num">0</div>
         <div class="num">1</div>
@@ -156,8 +167,8 @@
         <div class="num">8</div>
         <div class="num">9</div>
     </div>
-    <div class="colon"></div>
-    <div class="column">
+    <div class="colon hidden"></div>
+    <div class="column hidden">
         <div class="num">0</div>
         <div class="num">1</div>
         <div class="num">2</div>
@@ -165,7 +176,7 @@
         <div class="num">4</div>
         <div class="num">5</div>
     </div>
-    <div class="column">
+    <div class="column hidden">
         <div class="num">0</div>
         <div class="num">1</div>
         <div class="num">2</div>
@@ -177,11 +188,33 @@
         <div class="num">8</div>
         <div class="num">9</div>
     </div>
+<!--    <div class="colon hidden"></div>-->
+<!--    <div class="column hidden">-->
+<!--        <div class="num">0</div>-->
+<!--        <div class="num">1</div>-->
+<!--        <div class="num">2</div>-->
+<!--        <div class="num">3</div>-->
+<!--        <div class="num">4</div>-->
+<!--        <div class="num">5</div>-->
+<!--    </div>-->
+<!--    <div class="column hidden">-->
+<!--        <div class="num">0</div>-->
+<!--        <div class="num">1</div>-->
+<!--        <div class="num">2</div>-->
+<!--        <div class="num">3</div>-->
+<!--        <div class="num">4</div>-->
+<!--        <div class="num">5</div>-->
+<!--        <div class="num">6</div>-->
+<!--        <div class="num">7</div>-->
+<!--        <div class="num">8</div>-->
+<!--        <div class="num">9</div>-->
+<!--    </div>-->
 </div>
 
 <script>
     let size = window.innerWidth / 8;
     let columns = Array.from(document.getElementsByClassName('column'));
+    let colons = Array.from(document.getElementsByClassName('colon'));
     let d, c;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
     let use24HourClock = true;
@@ -215,6 +248,16 @@
 
     let loop = setInterval(() => {
         c = getClock();
+
+        // if (c % 2) {
+        //     colons.forEach((ele) => {
+        //         ele.style.opacity = "0";
+        //     })
+        // } else {
+        //     colons.forEach((ele) => {
+        //         ele.style.opacity = "1";
+        //     })
+        // }
 
         columns.forEach((ele, i) => {
             let n = +c[i];
