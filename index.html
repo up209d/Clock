@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset='UTF-8'>
+    <meta charset="utf-8">
+    <meta content="UP" name="UP">
+    <meta content="width=device-width,initial-scale=1" name="viewport">
+    <meta content="IE=edge" http-equiv="X-UA-Compatible">
     <title>Clock</title>
     <meta name="robots" content="noindex">
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
+    <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
     <style id="INLINE_PEN_STYLESHEET_ID">
         @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300");
 
@@ -37,9 +41,10 @@
             font-weight: 300;
             overflow: hidden;
             margin: 0;
+            padding: 0;
         }
 
-        .bg-video {
+        #playlist {
             min-width: 100vw;
             min-height: 100vh;
             position: fixed;
@@ -50,13 +55,18 @@
             opacity: 0.95;
         }
 
+        .bg-video {
+            min-width: 100vw;
+            min-height: 100vh;
+        }
+
         .vignette {
             position: fixed;
             top: 0;
             left: 0;
             min-width: 100vw;
             min-height: 100vh;
-            box-shadow: 0 0 calc(100vw / 10) calc(100vw / 20) rgba(0,0,0,0.5) inset;
+            box-shadow: 0 0 calc(100vw / 5) calc(100vw / 10) rgba(0, 0, 0, 0.75) inset;
             z-index: 99;
         }
 
@@ -85,7 +95,7 @@
             justify-content: center;
             align-items: center;
             box-sizing: border-box;
-            padding-bottom: calc(100vw / (8*8));
+            padding-bottom: calc(100vw / (8 * 8));
             text-shadow: 3px 3px 0 #000000;
             transition: .1s ease-in-out;
         }
@@ -193,27 +203,27 @@
         <div class="num">8</div>
         <div class="num">9</div>
     </div>
-<!--    <div class="colon hidden"></div>-->
-<!--    <div class="column hidden">-->
-<!--        <div class="num">0</div>-->
-<!--        <div class="num">1</div>-->
-<!--        <div class="num">2</div>-->
-<!--        <div class="num">3</div>-->
-<!--        <div class="num">4</div>-->
-<!--        <div class="num">5</div>-->
-<!--    </div>-->
-<!--    <div class="column hidden">-->
-<!--        <div class="num">0</div>-->
-<!--        <div class="num">1</div>-->
-<!--        <div class="num">2</div>-->
-<!--        <div class="num">3</div>-->
-<!--        <div class="num">4</div>-->
-<!--        <div class="num">5</div>-->
-<!--        <div class="num">6</div>-->
-<!--        <div class="num">7</div>-->
-<!--        <div class="num">8</div>-->
-<!--        <div class="num">9</div>-->
-<!--    </div>-->
+    <!--    <div class="colon hidden"></div>-->
+    <!--    <div class="column hidden">-->
+    <!--        <div class="num">0</div>-->
+    <!--        <div class="num">1</div>-->
+    <!--        <div class="num">2</div>-->
+    <!--        <div class="num">3</div>-->
+    <!--        <div class="num">4</div>-->
+    <!--        <div class="num">5</div>-->
+    <!--    </div>-->
+    <!--    <div class="column hidden">-->
+    <!--        <div class="num">0</div>-->
+    <!--        <div class="num">1</div>-->
+    <!--        <div class="num">2</div>-->
+    <!--        <div class="num">3</div>-->
+    <!--        <div class="num">4</div>-->
+    <!--        <div class="num">5</div>-->
+    <!--        <div class="num">6</div>-->
+    <!--        <div class="num">7</div>-->
+    <!--        <div class="num">8</div>-->
+    <!--        <div class="num">9</div>-->
+    <!--    </div>-->
 </div>
 
 <script>
@@ -228,11 +238,12 @@
         size = window.innerWidth / 8;
     }
 
+    window.HELLO = true;
     let video_id = 1;
     const playlist = document.getElementById("playlist");
     setInterval(() => {
         video_id = video_id++ % 39 + 1;
-        playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="videos/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+        if (window.HELLO) playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="videos/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
     }, 10000);
 
     function padClock(p, n) {
@@ -254,15 +265,15 @@
     let loop = setInterval(() => {
         c = getClock();
 
-        // if (c % 2) {
-        //     colons.forEach((ele) => {
-        //         ele.style.opacity = "0";
-        //     })
-        // } else {
-        //     colons.forEach((ele) => {
-        //         ele.style.opacity = "1";
-        //     })
-        // }
+        if (c % 2) {
+            colons.forEach((ele) => {
+                ele.style.opacity = "0.75";
+            })
+        } else {
+            colons.forEach((ele) => {
+                ele.style.opacity = "1";
+            })
+        }
 
         columns.forEach((ele, i) => {
             let n = +c[i];
