@@ -4,6 +4,10 @@
     <meta charset='UTF-8'>
     <title>Clock</title>
     <meta name="robots" content="noindex">
+    <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="manifest" href="site.webmanifest">
     <style id="INLINE_PEN_STYLESHEET_ID">
         @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300");
 
@@ -121,7 +125,7 @@
 <body>
 <div id="playlist">
     <video class="bg-video" autoplay loop muted>
-        <source src="loop-1.mp4" type="video/mp4">
+        <source src="videos/loop-1.mp4" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </div>
@@ -227,7 +231,7 @@
     const playlist = document.getElementById("playlist");
     setInterval(() => {
         video_id = video_id++ % 39 + 1;
-        playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+        playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="videos/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
     }, 10000);
 
     function padClock(p, n) {
