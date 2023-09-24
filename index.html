@@ -110,10 +110,12 @@
 </head>
 
 <body>
-<video id="playlist" class="bg-video" autoplay loop muted>
-    <source src="loop-1.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-</video>
+<div id="playlist">
+    <video class="bg-video" autoplay loop muted>
+        <source src="loop-1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
 <div class="vignette"></div>
 <div class="clock">
     <div class="column">
@@ -187,6 +189,13 @@
     window.onresize = function () {
         size = window.innerWidth / 8;
     }
+
+    let video_id = 1;
+    const playlist = document.getElementById("playlist");
+    setInterval(() => {
+        video_id = video_id++ % 8 + 1;
+        playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+    }, 160000);
 
     function padClock(p, n) {
         return p + ('0' + n).slice(-2);
