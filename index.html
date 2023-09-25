@@ -231,7 +231,7 @@
     let hourColumns = Array.from(document.querySelectorAll('#hours .column'));
     let minuteColumns = Array.from(document.querySelectorAll('#minutes .column'));
     let secondColumns = Array.from(document.querySelectorAll('#seconds .column'));
-    let colons = Array.from(document.querySelectorAll('.colon'));
+    // let colons = Array.from(document.querySelectorAll('.colon'));
     let d, c;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
     let use24HourClock = true;
@@ -288,15 +288,15 @@
         if (clockActionElapsed !== delta1000) {
             clockActionElapsed = delta1000;
             c = getClock();
-            if (c % 2) {
-                colons.forEach((ele) => {
-                    ele.style.opacity = "0.75";
-                })
-            } else {
-                colons.forEach((ele) => {
-                    ele.style.opacity = "1";
-                })
-            }
+            // if (c % 2) {
+            //     colons.forEach((ele) => {
+            //         ele.style.opacity = "0.75";
+            //     })
+            // } else {
+            //     colons.forEach((ele) => {
+            //         ele.style.opacity = "1";
+            //     })
+            // }
             []
                 .concat(hourColumns)
                 .concat(minuteColumns)
