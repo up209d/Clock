@@ -267,15 +267,15 @@
 
     let start = performance.now();
     let end = performance.now();
-    let randomActionElapsed;
-    let loopActionElapsed;
-    let clockActionElapsed;
+    let randomActionElapsed = 0;
+    let loopActionElapsed = 0;
+    let clockActionElapsed = 0;
     const frameAction = function () {
         end = performance.now();
         const delta100000 = Math.floor((end - start) / 100000);
         const delta10000 = Math.floor((end - start) / 10000);
         const delta1000 = Math.floor((end - start) / 1000);
-        if (hasRandomVideos && randomActionElapsed !== delta1000) {
+        if (hasRandomVideos && randomActionElapsed !== delta100000) {
             randomActionElapsed = delta100000;
             videoFolder = Object.keys(VIDEO_COUNT)[Math.floor(Math.random() * Object.keys(VIDEO_COUNT).length)];
             videoCount = VIDEO_COUNT[videoFolder];
