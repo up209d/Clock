@@ -313,6 +313,28 @@
         window.requestAnimationFrame(frameAction);
     }
     window.requestAnimationFrame(frameAction);
+
+    let hash;
+    setInterval(async () => {
+        if (window.fetch) {
+            try {
+                const res = await window.fetch("hash.json");
+                const json = await res.json();
+                const currentHash = json['hash'];
+                if (!currentHash) {
+                    return;
+                }
+                if (!hash && currentHash) {
+                    hash = currentHash;
+                }
+                if (hash && currentHash && hash !== currentHash) {
+                    window.location.reload();
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }, 1000);
 </script>
 </body>
 
