@@ -78,6 +78,13 @@
             position: relative;
         }
 
+        .seconds {
+            display: inline-block;
+            vertical-align: top;
+            height: 100vh;
+            overflow: hidden;
+        }
+
         .column {
             display: inline-block;
             vertical-align: top;
@@ -98,6 +105,7 @@
             padding-bottom: calc(100vw / (8 * 8));
             text-shadow: 3px 3px 0 #000000;
             transition: .1s ease-in-out;
+            vertical-align: middle;
         }
 
         .hidden {
@@ -177,48 +185,29 @@
         <div class="num">8</div>
         <div class="num">9</div>
     </div>
-    <div class="colon hidden"></div>
-    <div class="column hidden">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
-        <div class="num">3</div>
-        <div class="num">4</div>
-        <div class="num">5</div>
-    </div>
-    <div class="column hidden">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
-        <div class="num">3</div>
-        <div class="num">4</div>
-        <div class="num">5</div>
-        <div class="num">6</div>
-        <div class="num">7</div>
-        <div class="num">8</div>
-        <div class="num">9</div>
-    </div>
-    <!--    <div class="colon hidden"></div>-->
-    <!--    <div class="column hidden">-->
-    <!--        <div class="num">0</div>-->
-    <!--        <div class="num">1</div>-->
-    <!--        <div class="num">2</div>-->
-    <!--        <div class="num">3</div>-->
-    <!--        <div class="num">4</div>-->
-    <!--        <div class="num">5</div>-->
-    <!--    </div>-->
-    <!--    <div class="column hidden">-->
-    <!--        <div class="num">0</div>-->
-    <!--        <div class="num">1</div>-->
-    <!--        <div class="num">2</div>-->
-    <!--        <div class="num">3</div>-->
-    <!--        <div class="num">4</div>-->
-    <!--        <div class="num">5</div>-->
-    <!--        <div class="num">6</div>-->
-    <!--        <div class="num">7</div>-->
-    <!--        <div class="num">8</div>-->
-    <!--        <div class="num">9</div>-->
-    <!--    </div>-->
+<!--    <div class="seconds">-->
+<!--        <div class="colon">:</div>-->
+<!--        <div class="column">-->
+<!--            <div class="num">0</div>-->
+<!--            <div class="num">1</div>-->
+<!--            <div class="num">2</div>-->
+<!--            <div class="num">3</div>-->
+<!--            <div class="num">4</div>-->
+<!--            <div class="num">5</div>-->
+<!--        </div>-->
+<!--        <div class="column">-->
+<!--            <div class="num">0</div>-->
+<!--            <div class="num">1</div>-->
+<!--            <div class="num">2</div>-->
+<!--            <div class="num">3</div>-->
+<!--            <div class="num">4</div>-->
+<!--            <div class="num">5</div>-->
+<!--            <div class="num">6</div>-->
+<!--            <div class="num">7</div>-->
+<!--            <div class="num">8</div>-->
+<!--            <div class="num">9</div>-->
+<!--        </div>-->
+<!--    </div>-->
 </div>
 
 <script>
@@ -237,15 +226,6 @@
         size = window.innerWidth / 8;
     }
 
-    window.LOOPING = true;
-    let video_id = 1;
-    const playlist = document.getElementById("playlist");
-    playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
-    setInterval(() => {
-        video_id = video_id++ % videoCount + 1;
-        if (window.LOOPING) playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
-    }, 10000);
-
     function padClock(p, n) {
         return p + ('0' + n).slice(-2);
     }
@@ -262,28 +242,48 @@
         return classList.find((class_, classIndex) => Math.abs(n - i2) === classIndex) || '';
     }
 
-    let loop = setInterval(() => {
-        c = getClock();
+    window.LOOPING = true;
+    let video_id = 1;
+    const playlist = document.getElementById("playlist");
+    playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
 
-        if (c % 2) {
-            colons.forEach((ele) => {
-                ele.style.opacity = "0.75";
-            })
-        } else {
-            colons.forEach((ele) => {
-                ele.style.opacity = "1";
-            })
+    let start = performance.now();
+    let end = performance.now();
+    let loopActionElapsed ;
+    let clockActionElapsed;
+    const frameAction = function () {
+        end = performance.now();
+        const delta10000 = Math.floor((end - start) / 10000);
+        const delta1000 = Math.floor((end - start) / 1000);
+        if (loopActionElapsed !== delta10000) {
+            loopActionElapsed = delta10000;
+            video_id = video_id++ % videoCount + 1;
+            if (window.LOOPING) playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
         }
-
-        columns.forEach((ele, i) => {
-            let n = +c[i];
-            let offset = -n * size;
-            ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
-            Array.from(ele.children).forEach((ele2, i2) => {
-                ele2.className = 'num ' + getClass(n, i2);
+        if (clockActionElapsed !== delta1000) {
+            clockActionElapsed = delta1000;
+            c = getClock();
+            if (c % 2) {
+                colons.forEach((ele) => {
+                    ele.style.opacity = "0.75";
+                })
+            } else {
+                colons.forEach((ele) => {
+                    ele.style.opacity = "1";
+                })
+            }
+            columns.forEach((ele, i) => {
+                let n = +c[i];
+                let offset = -n * size;
+                ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
+                Array.from(ele.children).forEach((ele2, i2) => {
+                    ele2.className = 'num ' + getClass(n, i2);
+                });
             });
-        });
-    }, 200 + Math.E * 10);
+        }
+        window.requestAnimationFrame(frameAction);
+    }
+    window.requestAnimationFrame(frameAction);
 </script>
 </body>
 
