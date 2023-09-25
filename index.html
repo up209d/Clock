@@ -60,7 +60,7 @@
             min-height: 100vh;
         }
 
-        .vignette {
+        #vignette {
             position: fixed;
             top: 0;
             left: 0;
@@ -70,7 +70,7 @@
             z-index: 99;
         }
 
-        .clock {
+        #clock {
             width: 100vw;
             height: 100vh;
             overflow: hidden;
@@ -78,7 +78,7 @@
             position: relative;
         }
 
-        .seconds {
+        .block {
             display: inline-block;
             vertical-align: top;
             height: 100vh;
@@ -143,84 +143,103 @@
 
 <body>
 <div id="playlist"></div>
-<div class="vignette"></div>
-<div class="clock">
-    <div class="column">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
+<div id="vignette"></div>
+<div id="clock">
+    <div id="hours" class="block">
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+        </div>
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+            <div class="num">3</div>
+            <div class="num">4</div>
+            <div class="num">5</div>
+            <div class="num">6</div>
+            <div class="num">7</div>
+            <div class="num">8</div>
+            <div class="num">9</div>
+        </div>
     </div>
-    <div class="column">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
-        <div class="num">3</div>
-        <div class="num">4</div>
-        <div class="num">5</div>
-        <div class="num">6</div>
-        <div class="num">7</div>
-        <div class="num">8</div>
-        <div class="num">9</div>
+    <div id="minutes" class="block">
+        <div class="colon">
+            <div>:</div>
+        </div>
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+            <div class="num">3</div>
+            <div class="num">4</div>
+            <div class="num">5</div>
+        </div>
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+            <div class="num">3</div>
+            <div class="num">4</div>
+            <div class="num">5</div>
+            <div class="num">6</div>
+            <div class="num">7</div>
+            <div class="num">8</div>
+            <div class="num">9</div>
+        </div>
     </div>
-    <div class="colon">
-        <div>:</div>
+    <div id="seconds" class="block">
+        <div class="colon">:</div>
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+            <div class="num">3</div>
+            <div class="num">4</div>
+            <div class="num">5</div>
+        </div>
+        <div class="column">
+            <div class="num">0</div>
+            <div class="num">1</div>
+            <div class="num">2</div>
+            <div class="num">3</div>
+            <div class="num">4</div>
+            <div class="num">5</div>
+            <div class="num">6</div>
+            <div class="num">7</div>
+            <div class="num">8</div>
+            <div class="num">9</div>
+        </div>
     </div>
-    <div class="column">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
-        <div class="num">3</div>
-        <div class="num">4</div>
-        <div class="num">5</div>
-    </div>
-    <div class="column">
-        <div class="num">0</div>
-        <div class="num">1</div>
-        <div class="num">2</div>
-        <div class="num">3</div>
-        <div class="num">4</div>
-        <div class="num">5</div>
-        <div class="num">6</div>
-        <div class="num">7</div>
-        <div class="num">8</div>
-        <div class="num">9</div>
-    </div>
-<!--    <div class="seconds">-->
-<!--        <div class="colon">:</div>-->
-<!--        <div class="column">-->
-<!--            <div class="num">0</div>-->
-<!--            <div class="num">1</div>-->
-<!--            <div class="num">2</div>-->
-<!--            <div class="num">3</div>-->
-<!--            <div class="num">4</div>-->
-<!--            <div class="num">5</div>-->
-<!--        </div>-->
-<!--        <div class="column">-->
-<!--            <div class="num">0</div>-->
-<!--            <div class="num">1</div>-->
-<!--            <div class="num">2</div>-->
-<!--            <div class="num">3</div>-->
-<!--            <div class="num">4</div>-->
-<!--            <div class="num">5</div>-->
-<!--            <div class="num">6</div>-->
-<!--            <div class="num">7</div>-->
-<!--            <div class="num">8</div>-->
-<!--            <div class="num">9</div>-->
-<!--        </div>-->
-<!--    </div>-->
 </div>
 
 <script>
+    const VIDEO_COUNT = {
+        ghibli: 39,
+        rain: 4,
+        fireworks: 7
+    };
+
     const queryParams = new URLSearchParams(window.location.search);
-    const videoFolder = queryParams.get('video') || 'ghibli';
-    const videoCount = parseInt(queryParams.get('count')) || 39;
+    let hasSeconds = queryParams.get('hasSeconds') !== undefined && queryParams.get('hasSeconds') !== null;
+    let hasRandomVideos = queryParams.get('randomVideos') !== undefined && queryParams.get('randomVideos') !== null;
+    let videoFolder = queryParams.get('video') || 'ghibli';
+    let videoCount = parseInt(queryParams.get('count')) || VIDEO_COUNT[videoFolder] || 1;
 
     let size = window.innerWidth / 8;
-    let columns = Array.from(document.getElementsByClassName('column'));
-    let colons = Array.from(document.getElementsByClassName('colon'));
+    // let columns = Array.from(document.getElementsByClassName('column'));
+    let hourColumns = Array.from(document.querySelectorAll('#hours .column'));
+    let minuteColumns = Array.from(document.querySelectorAll('#minutes .column'));
+    let secondColumns = Array.from(document.querySelectorAll('#seconds .column'));
+    let colons = Array.from(document.querySelectorAll('.colon'));
     let d, c;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
     let use24HourClock = true;
+
+    if (!hasSeconds) {
+        document.getElementById('seconds').parentNode.removeChild(document.getElementById('seconds'));
+    }
 
     window.onresize = function () {
         size = window.innerWidth / 8;
@@ -249,12 +268,19 @@
 
     let start = performance.now();
     let end = performance.now();
-    let loopActionElapsed ;
+    let randomActionElapsed;
+    let loopActionElapsed;
     let clockActionElapsed;
     const frameAction = function () {
         end = performance.now();
+        const delta100000 = Math.floor((end - start) / 100000);
         const delta10000 = Math.floor((end - start) / 10000);
         const delta1000 = Math.floor((end - start) / 1000);
+        if (hasRandomVideos && randomActionElapsed !== delta1000) {
+            randomActionElapsed = delta100000;
+            videoFolder = Object.keys(VIDEO_COUNT)[Math.floor(Math.random() * Object.keys(VIDEO_COUNT).length)];
+            videoCount = VIDEO_COUNT[videoFolder];
+        }
         if (loopActionElapsed !== delta10000) {
             loopActionElapsed = delta10000;
             video_id = video_id++ % videoCount + 1;
@@ -272,14 +298,18 @@
                     ele.style.opacity = "1";
                 })
             }
-            columns.forEach((ele, i) => {
-                let n = +c[i];
-                let offset = -n * size;
-                ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
-                Array.from(ele.children).forEach((ele2, i2) => {
-                    ele2.className = 'num ' + getClass(n, i2);
+            []
+                .concat(hourColumns)
+                .concat(minuteColumns)
+                .concat(hasSeconds ? secondColumns : [])
+                .forEach((ele, i) => {
+                    let n = +c[i];
+                    let offset = -n * size;
+                    ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
+                    Array.from(ele.children).forEach((ele2, i2) => {
+                        ele2.className = 'num ' + getClass(n, i2);
+                    });
                 });
-            });
         }
         window.requestAnimationFrame(frameAction);
     }
