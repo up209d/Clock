@@ -2,6 +2,8 @@
 
 A clock with background video, for digital photo frames and tablets
 
+Check it out: https://up209d.github.io/clock/?hasSecond&randomVideos
+
 <p style="text-align: center;">
     <img alt="screenshot" src="https://github.com/up209d/clock/blob/main/ss.jpg?raw=true" width="100%" />
 </p>
