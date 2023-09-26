@@ -14,7 +14,7 @@ Check it out: https://up209d.github.io/clock/?hasSecond&randomVideos
 
 ### Query Params
 ```
-    video: Choose between [ghibli, rain, fireworks], add more later
+    video: Choose between [ghibli, rain, fireworks, grass], add more later
     hasSeconds: Valid check only,
     randomVideos: Valid check only,
 ```

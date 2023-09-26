@@ -282,6 +282,10 @@
         fireworks: {
             ext: 'm3u8',
             type: 'application/x-mpegURL'
+        },
+        grass: {
+            ext: 'm3u8',
+            type: 'application/x-mpegURL'
         }
     };
 
@@ -347,15 +351,17 @@
 
     const frameAction = function () {
         end = performance.now();
-        const delta100000 = Math.floor((end - start) / 100000);
-        const delta1000 = Math.floor((end - start) / 1000);
-        if (hasRandomVideos && randomActionElapsed !== delta100000) {
-            randomActionElapsed = delta100000;
+
+        const delta10mins = Math.floor((end - start) / 600000);
+        if (hasRandomVideos && randomActionElapsed !== delta10mins) {
+            randomActionElapsed = delta10mins;
             videoFolder = Object.keys(VIDEO_PROFILES)[Math.floor(Math.random() * Object.keys(VIDEO_PROFILES).length)];
             videoType = VIDEO_PROFILES[videoFolder]?.type;
             videoExt = VIDEO_PROFILES[videoFolder]?.ext;
             player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
         }
+
+        const delta1000 = Math.floor((end - start) / 1000);
         if (clockActionElapsed !== delta1000) {
             clockActionElapsed = delta1000;
             c = getClock();
@@ -383,7 +389,6 @@
                     .join('');
             }
         }
-
         window.requestAnimationFrame(frameAction);
     }
     window.requestAnimationFrame(frameAction);
