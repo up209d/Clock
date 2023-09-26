@@ -343,11 +343,6 @@
         return classList.find((class_, classIndex) => Math.abs(n - i2) === classIndex) || '';
     }
 
-    let video_id = 1;
-    // video_id = video_id++ % videoCount + 1;
-    const player = videojs('video-js');
-    player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}])
-    window.player = player;
 
     let start = performance.now();
     let end = performance.now();
@@ -363,16 +358,30 @@
         return [weekday, day, month, year];
     }
 
+
+    const playRandomVideo = function () {
+        videoFolder = Object.keys(VIDEO_PROFILES)[Math.floor(Math.random() * Object.keys(VIDEO_PROFILES).length)];
+        videoType = VIDEO_PROFILES[videoFolder]?.type;
+        videoExt = VIDEO_PROFILES[videoFolder]?.ext;
+        player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
+    }
+
+    let video_id = 1;
+    // video_id = video_id++ % videoCount + 1;
+    const player = window.player = videojs('video-js');
+    if (hasRandomVideos) {
+        playRandomVideo();
+    } else {
+        player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}])
+    }
+
     const frameAction = function () {
         end = performance.now();
 
         const delta10mins = Math.floor((end - start) / 600000);
         if (hasRandomVideos && randomActionElapsed !== delta10mins) {
             randomActionElapsed = delta10mins;
-            videoFolder = Object.keys(VIDEO_PROFILES)[Math.floor(Math.random() * Object.keys(VIDEO_PROFILES).length)];
-            videoType = VIDEO_PROFILES[videoFolder]?.type;
-            videoExt = VIDEO_PROFILES[videoFolder]?.ext;
-            player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
+            playRandomVideo();
         }
 
         const delta1000 = Math.floor((end - start) / 1000);
