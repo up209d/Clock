@@ -90,6 +90,7 @@
             overflow: hidden;
             animation: anti-burn-in forwards 30s infinite linear;
             position: relative;
+            visibility: hidden;
         }
 
         #weekdays {
@@ -270,22 +271,30 @@
     //     ext: 'mp4',
     //     type: 'video/mp4'
     // },
+    // ghibli: {
+    //     ext: 'm3u8',
+    //     type: 'application/x-mpegURL'
+    // },
     const VIDEO_PROFILES = {
         ghibli: {
-            ext: 'm3u8',
-            type: 'application/x-mpegURL'
+            ext: 'mp4',
+            type: 'video/mp4'
+        },
+        ghibli_2: {
+            ext: 'mp4',
+            type: 'video/mp4'
         },
         rain: {
-            ext: 'm3u8',
-            type: 'application/x-mpegURL'
+            ext: 'mp4',
+            type: 'video/mp4'
         },
         fireworks: {
-            ext: 'm3u8',
-            type: 'application/x-mpegURL'
+            ext: 'mp4',
+            type: 'video/mp4'
         },
         grass: {
-            ext: 'm3u8',
-            type: 'application/x-mpegURL'
+            ext: 'mp4',
+            type: 'video/mp4'
         },
         urban: {
             ext: 'mp4',
@@ -294,6 +303,7 @@
     };
 
     const queryParams = new URLSearchParams(window.location.search);
+    let ticked;
     let hasSeconds = queryParams.get('hasSeconds') !== undefined && queryParams.get('hasSeconds') !== null;
     let hasRandomVideos = queryParams.get('randomVideos') !== undefined && queryParams.get('randomVideos') !== null;
     let videoFolder = queryParams.get('video') || 'ghibli';
@@ -368,6 +378,9 @@
         const delta1000 = Math.floor((end - start) / 1000);
         if (clockActionElapsed !== delta1000) {
             clockActionElapsed = delta1000;
+            if (!ticked) {
+                document.getElementById('clock').style.visibility = 'visible';
+            }
             c = getClock();
             []
                 .concat(hourColumns)
