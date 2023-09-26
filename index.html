@@ -12,6 +12,7 @@
     <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
     <link rel="manifest" href="site.webmanifest">
     <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.1/normalize.css">
+    <link href="https://vjs.zencdn.net/8.5.2/video-js.css" rel="stylesheet"/>
     <style>
         @import url("https://fonts.googleapis.com/css?family=Roboto+Condensed:300");
 
@@ -55,6 +56,15 @@
             opacity: 0.95;
         }
 
+        /* Override video-js style */
+        #playlist video {
+            width: unset !important;
+            height: unset !important;
+            min-width: 100vw;
+            min-height: 100vh;
+        }
+
+        /* For native html5 video style */
         .bg-video {
             min-width: 100vw;
             min-height: 100vh;
@@ -165,7 +175,11 @@
 </head>
 
 <body>
-<div id="playlist"></div>
+<div id="playlist">
+    <video id="video-js" class="video-js bg-video" autoplay loop muted preload>
+        Your browser does not support the video tag.
+    </video>
+</div>
 <div id="vignette"></div>
 <div id="clock">
     <div id="weekdays" class="block">
@@ -246,26 +260,38 @@
         <div>00</div>
     </div>
 </div>
-
+<script src="https://vjs.zencdn.net/8.5.2/video.min.js"></script>
 <script>
-    const VIDEO_COUNT = {
-        ghibli: 39,
-        rain: 4,
-        fireworks: 7
+    // ghibli: {
+    //     ext: 'mp4',
+    //     type: 'video/mp4'
+    // },
+    const VIDEO_PROFILES = {
+        ghibli: {
+            ext: 'm3u8',
+            type: 'application/x-mpegURL'
+        },
+        rain: {
+            ext: 'm3u8',
+            type: 'application/x-mpegURL'
+        },
+        fireworks: {
+            ext: 'm3u8',
+            type: 'application/x-mpegURL'
+        }
     };
 
     const queryParams = new URLSearchParams(window.location.search);
     let hasSeconds = queryParams.get('hasSeconds') !== undefined && queryParams.get('hasSeconds') !== null;
     let hasRandomVideos = queryParams.get('randomVideos') !== undefined && queryParams.get('randomVideos') !== null;
     let videoFolder = queryParams.get('video') || 'ghibli';
-    let videoCount = parseInt(queryParams.get('count')) || VIDEO_COUNT[videoFolder] || 1;
+    let videoType = parseInt(queryParams.get('type')) || VIDEO_PROFILES[videoFolder]?.type || 'video/mp4';
+    let videoExt = parseInt(queryParams.get('ext')) || VIDEO_PROFILES[videoFolder]?.ext || 'mp4';
 
     let size = window.innerWidth / 8;
-    // let columns = Array.from(document.getElementsByClassName('column'));
     let hourColumns = Array.from(document.querySelectorAll('#hours .column'));
     let minuteColumns = Array.from(document.querySelectorAll('#minutes .column'));
     let secondColumns = Array.from(document.querySelectorAll('#seconds .column'));
-    // let colons = Array.from(document.querySelectorAll('.colon'));
     let d, c;
     let dateFactors;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
@@ -277,7 +303,7 @@
 
     window.onresize = function () {
         size = window.innerWidth / 8;
-    }
+    };
 
     function padClock(p, n) {
         return p + ('0' + n).slice(-2);
@@ -295,15 +321,15 @@
         return classList.find((class_, classIndex) => Math.abs(n - i2) === classIndex) || '';
     }
 
-    window.LOOPING = true;
     let video_id = 1;
-    const playlist = document.getElementById("playlist");
-    playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+    // video_id = video_id++ % videoCount + 1;
+    const player = videojs('video-js');
+    player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}])
+    window.player = player;
 
     let start = performance.now();
     let end = performance.now();
     let randomActionElapsed = 0;
-    let loopActionElapsed = 0;
     let clockActionElapsed = 0;
 
     const getDateFactors = function () {
@@ -318,30 +344,17 @@
     const frameAction = function () {
         end = performance.now();
         const delta100000 = Math.floor((end - start) / 100000);
-        const delta20000 = Math.floor((end - start) / 20000);
         const delta1000 = Math.floor((end - start) / 1000);
         if (hasRandomVideos && randomActionElapsed !== delta100000) {
             randomActionElapsed = delta100000;
-            videoFolder = Object.keys(VIDEO_COUNT)[Math.floor(Math.random() * Object.keys(VIDEO_COUNT).length)];
-            videoCount = VIDEO_COUNT[videoFolder];
-        }
-        if (loopActionElapsed !== delta20000) {
-            loopActionElapsed = delta20000;
-            video_id = video_id++ % videoCount + 1;
-            if (window.LOOPING) playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
+            videoFolder = Object.keys(VIDEO_PROFILES)[Math.floor(Math.random() * Object.keys(VIDEO_PROFILES).length)];
+            videoType = VIDEO_PROFILES[videoFolder]?.type;
+            videoExt = VIDEO_PROFILES[videoFolder]?.ext;
+            player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
         }
         if (clockActionElapsed !== delta1000) {
             clockActionElapsed = delta1000;
             c = getClock();
-            // if (c % 2) {
-            //     colons.forEach((ele) => {
-            //         ele.style.opacity = "0.75";
-            //     })
-            // } else {
-            //     colons.forEach((ele) => {
-            //         ele.style.opacity = "1";
-            //     })
-            // }
             []
                 .concat(hourColumns)
                 .concat(minuteColumns)
@@ -361,7 +374,7 @@
                     .split('')
                     .map(c => `<div>${c}</div>`)
                     .join('');
-                document.getElementById('dates').innerHTML = [dateFactors[1],dateFactors[2],dateFactors[3]]
+                document.getElementById('dates').innerHTML = [dateFactors[1], dateFactors[2], dateFactors[3]]
                     .map(c => `<div>${c}</div>`)
                     .join('');
             }
