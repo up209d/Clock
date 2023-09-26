@@ -273,15 +273,15 @@
     const frameAction = function () {
         end = performance.now();
         const delta100000 = Math.floor((end - start) / 100000);
-        const delta10000 = Math.floor((end - start) / 10000);
+        const delta20000 = Math.floor((end - start) / 20000);
         const delta1000 = Math.floor((end - start) / 1000);
         if (hasRandomVideos && randomActionElapsed !== delta100000) {
             randomActionElapsed = delta100000;
             videoFolder = Object.keys(VIDEO_COUNT)[Math.floor(Math.random() * Object.keys(VIDEO_COUNT).length)];
             videoCount = VIDEO_COUNT[videoFolder];
         }
-        if (loopActionElapsed !== delta10000) {
-            loopActionElapsed = delta10000;
+        if (loopActionElapsed !== delta20000) {
+            loopActionElapsed = delta20000;
             video_id = video_id++ % videoCount + 1;
             if (window.LOOPING) playlist.innerHTML = `<video class="bg-video" autoplay loop muted><source src="${videoFolder}/loop-${video_id}.mp4" type="video/mp4">Your browser does not support the video tag.</video>`;
         }
