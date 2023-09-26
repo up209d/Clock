@@ -78,6 +78,30 @@
             position: relative;
         }
 
+        #weekdays {
+            display: inline-flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: flex-end;
+            font-size: calc(100vw / 24);
+            line-height: calc(100vw / 8);
+            padding-right: 20px;
+            opacity: 0.75;
+            text-shadow: 3px 3px 0 #000000;
+        }
+
+        #dates {
+            display: inline-flex;
+            flex-flow: column nowrap;
+            justify-content: center;
+            align-items: flex-start;
+            font-size: calc(100vw / 24);
+            line-height: calc(100vw / 8);
+            padding-left: 20px;
+            opacity: 0.75;
+            text-shadow: 3px 3px 0 #000000;
+        }
+
         .block {
             display: inline-block;
             vertical-align: top;
@@ -144,6 +168,11 @@
 <div id="playlist"></div>
 <div id="vignette"></div>
 <div id="clock">
+    <div id="weekdays" class="block">
+        <div>S</div>
+        <div>S</div>
+        <div>S</div>
+    </div>
     <div id="hours" class="block">
         <div class="column">
             <div class="num">0</div>
@@ -211,6 +240,11 @@
             <div class="num">9</div>
         </div>
     </div>
+    <div id="dates" class="block">
+        <div>00</div>
+        <div>00</div>
+        <div>00</div>
+    </div>
 </div>
 
 <script>
@@ -233,6 +267,7 @@
     let secondColumns = Array.from(document.querySelectorAll('#seconds .column'));
     // let colons = Array.from(document.querySelectorAll('.colon'));
     let d, c;
+    let dateFactors;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
     let use24HourClock = true;
 
@@ -270,6 +305,16 @@
     let randomActionElapsed = 0;
     let loopActionElapsed = 0;
     let clockActionElapsed = 0;
+
+    const getDateFactors = function () {
+        const d = new Date();
+        const weekday = d.toLocaleDateString('en-US', {weekday: 'short'}).toUpperCase();
+        const day = d.toLocaleDateString('en-US', {day: 'numeric'}).padStart(2, '0');
+        const month = d.toLocaleDateString('en-US', {month: 'numeric'}).padStart(2, '0');
+        const year = d.toLocaleDateString('en-US', {year: '2-digit'}).padStart(2, '0');
+        return [weekday, day, month, year];
+    }
+
     const frameAction = function () {
         end = performance.now();
         const delta100000 = Math.floor((end - start) / 100000);
@@ -309,7 +354,19 @@
                         ele2.className = 'num ' + getClass(n, i2);
                     });
                 });
+            const currentDateFactor = getDateFactors();
+            if (!dateFactors || dateFactors.join() !== currentDateFactor.join()) {
+                dateFactors = currentDateFactor;
+                document.getElementById('weekdays').innerHTML = dateFactors[0]
+                    .split('')
+                    .map(c => `<div>${c}</div>`)
+                    .join('');
+                document.getElementById('dates').innerHTML = [dateFactors[1],dateFactors[2],dateFactors[3]]
+                    .map(c => `<div>${c}</div>`)
+                    .join('');
+            }
         }
+
         window.requestAnimationFrame(frameAction);
     }
     window.requestAnimationFrame(frameAction);
