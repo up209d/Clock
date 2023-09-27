@@ -318,7 +318,7 @@
     let hourColumns = Array.from(document.querySelectorAll('#hours .column'));
     let minuteColumns = Array.from(document.querySelectorAll('#minutes .column'));
     let secondColumns = Array.from(document.querySelectorAll('#seconds .column'));
-    let d, c;
+    let date, clock;
     let dateFactors;
     let classList = ['visible', 'close', 'far', 'far', 'distant', 'distant'];
     let use24HourClock = true;
@@ -336,11 +336,11 @@
     }
 
     function getClock() {
-        d = new Date();
+        date = new Date();
         return [
-            use24HourClock ? d.getHours() : d.getHours() % 12 || 12,
-            d.getMinutes(),
-            d.getSeconds()].reduce(padClock, '');
+            use24HourClock ? date.getHours() : date.getHours() % 12 || 12,
+            date.getMinutes(),
+            date.getSeconds()].reduce(padClock, '');
     }
 
     function getClass(n, i2) {
@@ -388,25 +388,29 @@
             playRandomVideo();
         }
 
-        const delta1000 = Math.floor((end - start) / 1000);
-        if (clockActionElapsed !== delta1000) {
-            clockActionElapsed = delta1000;
+        const delta250 = Math.floor((end - start) / 250);
+        if (clockActionElapsed !== delta250) {
+            clockActionElapsed = delta250;
             if (!ticked) {
                 document.getElementById('clock').style.visibility = 'visible';
+                ticked = true;
             }
-            c = getClock();
-            []
-                .concat(hourColumns)
-                .concat(minuteColumns)
-                .concat(hasSeconds ? secondColumns : [])
-                .forEach((ele, i) => {
-                    let n = +c[i];
-                    let offset = -n * size;
-                    ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
-                    Array.from(ele.children).forEach((ele2, i2) => {
-                        ele2.className = 'num ' + getClass(n, i2);
+            const currentClock = getClock().substring(0, hasSeconds ? 6 : 4);
+            if (clock !== currentClock) {
+                clock = currentClock;
+                []
+                    .concat(hourColumns)
+                    .concat(minuteColumns)
+                    .concat(hasSeconds ? secondColumns : [])
+                    .forEach((ele, i) => {
+                        let n = +clock[i];
+                        let offset = -n * size;
+                        ele.style.transform = `translateY(calc(50vh + ${offset}px - ${size / 2}px))`;
+                        Array.from(ele.children).forEach((ele2, i2) => {
+                            ele2.className = 'num ' + getClass(n, i2);
+                        });
                     });
-                });
+            }
             const currentDateFactor = getDateFactors();
             if (!dateFactors || dateFactors.join() !== currentDateFactor.join()) {
                 dateFactors = currentDateFactor;
