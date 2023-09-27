@@ -403,9 +403,9 @@
             playRandomVideo();
         }
 
-        const delta250 = Math.floor((end - start) / 250);
-        if (clockActionElapsed !== delta250) {
-            clockActionElapsed = delta250;
+        const delta500 = Math.floor((end - start) / 500);
+        if (clockActionElapsed !== delta500) {
+            clockActionElapsed = delta500;
             if (!ticked) {
                 document.getElementById('clock').style.visibility = 'visible';
                 ticked = true;
