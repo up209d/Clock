@@ -370,13 +370,28 @@
         player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
     }
 
+    const debounce = function (func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => {
+                func.apply(this, args);
+            }, timeout);
+        };
+    }
+
     let video_id = 1;
     // video_id = video_id++ % videoCount + 1;
     const player = window.player = videojs('video-js');
+    const retryPlaying = debounce(function () {
+        console.log('Retrying to play again...');
+        player.src(player.src());
+    }, 1000);
+    player.on('error', retryPlaying);
     if (hasRandomVideos) {
         playRandomVideo();
     } else {
-        player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}])
+        player.src([{src: `${videoFolder}/loop-${video_id}.${videoExt}`, type: videoType}]);
     }
 
     const frameAction = function () {
