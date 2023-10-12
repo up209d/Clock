@@ -181,7 +181,7 @@
 
 <body>
 <div id="playlist">
-    <video id="video-js" class="video-js bg-video" autoplay loop muted preload>
+    <video id="video-js" class="video-js bg-video" autoplay loop muted preload playsinline>
         Your browser does not support the video tag.
     </video>
 </div>
@@ -386,7 +386,7 @@
 
     let video_id = 1;
     // video_id = video_id++ % videoCount + 1;
-    const player = window.player = videojs('video-js');
+    const player = window.player = videojs('video-js', {autoplay: 'muted'});
     const retryPlaying = debounce(function () {
         console.log('Retrying to play again...');
         player.src(player.src());
