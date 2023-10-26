@@ -1,0 +1,9 @@
+*.mp4 filter=lfs diff=lfs merge=lfs -text
+fireworks/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+galaxy/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+ghibli/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+ghibli_2/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+grass/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+rain/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+urban/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
+day_sky/loop-1.mp4 filter=lfs diff=lfs merge=lfs -text
